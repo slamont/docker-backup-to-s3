@@ -23,8 +23,10 @@ else
     CRON_ENV="PARAMS='$PARAMS'"
     CRON_ENV="$CRON_ENV\nDATA_PATH='$DATA_PATH'"
     CRON_ENV="$CRON_ENV\nS3_PATH='$S3_PATH'"
+    CRON_ENV="$CRON_ENV\nPREFIX='$PREFIX'"
+    CRON_ENV="$CRON_ENV\nAES_PASSPHRASE='$AES_PASSPHRASE'"
     echo -e "$CRON_ENV\n$CRON_SCHEDULE /upload.sh > $LOGFIFO 2>&1" | crontab -
     crontab -l
     cron
-    tail -f "$LOGFIFO"
+    tail -f "$LOGFIFO" | sed 's/AES_PASSPHRASE=.*$/AES_PASSPHRASE=*****/'
 fi
