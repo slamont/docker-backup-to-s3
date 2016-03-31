@@ -1,5 +1,5 @@
 [default]
-bucket_location = US
+bucket_location = eu-central-1
 cloudfront_host = cloudfront.amazonaws.com
 default_mime_type = binary/octet-stream
 delete_removed = False
