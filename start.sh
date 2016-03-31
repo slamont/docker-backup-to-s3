@@ -5,6 +5,7 @@ set -e
 : ${ACCESS_KEY:?"ACCESS_KEY env variable is required"}
 : ${SECRET_KEY:?"SECRET_KEY env variable is required"}
 : ${S3_PATH:?"S3_PATH env variable is required"}
+: ${AES_PASSPHRASE:?"AES_PASSPHRASE env variable is required"}
 export DATA_PATH=${DATA_PATH:-/data/}
 CRON_SCHEDULE=${CRON_SCHEDULE:-0 1 * * *}
 
@@ -26,7 +27,7 @@ else
     CRON_ENV="$CRON_ENV\nPREFIX='$PREFIX'"
     CRON_ENV="$CRON_ENV\nAES_PASSPHRASE='$AES_PASSPHRASE'"
     echo -e "$CRON_ENV\n$CRON_SCHEDULE /upload.sh > $LOGFIFO 2>&1" | crontab -
-    crontab -l
+    #crontab -l
     cron
-    tail -f "$LOGFIFO" | sed 's/AES_PASSPHRASE=.*$/AES_PASSPHRASE=*****/'
+    tail -f "$LOGFIFO"
 fi
