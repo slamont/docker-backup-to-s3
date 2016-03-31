@@ -1,11 +1,11 @@
-istepanov/backup-to-s3
+strawpay/backup-to-s3
 ======================
 
 Docker container that periodically backups files to Amazon S3 using [s3cmd sync](http://s3tools.org/s3cmd-sync) and cron.
 
 ### Usage
 
-    docker run -d [OPTIONS] istepanov/backup-to-s3
+    docker run -d [OPTIONS] strawpay/backup-to-s3
 
 ### Parameters:
 
@@ -31,7 +31,7 @@ Run upload to S3 everyday at 12:00pm:
         -e S3_PATH=s3://my-bucket/backup/ \
         -e 'CRON_SCHEDULE=0 12 * * *' \
         -v /home/user/data:/data:ro \
-        istepanov/backup-to-s3
+        strawpay/backup-to-s3
 
 Run once then delete the container:
 
@@ -40,7 +40,7 @@ Run once then delete the container:
         -e SECRET_KEY=myawssecret \
         -e S3_PATH=s3://my-bucket/backup/ \
         -v /home/user/data:/data:ro \
-        istepanov/backup-to-s3 no-cron
+        strawpay/backup-to-s3 no-cron
 
 Run once to delete from s3 then delete the container:
 
@@ -48,4 +48,4 @@ Run once to delete from s3 then delete the container:
         -e ACCESS_KEY=myawskey \
         -e SECRET_KEY=myawssecret \
         -e S3_PATH=s3://my-bucket/backup/ \
-        istepanov/backup-to-s3 delete
+        strawpay/backup-to-s3 delete
