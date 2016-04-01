@@ -25,12 +25,12 @@ To decrypt file.tgz.aes:
 * `-e PARAMS="--dry-run"`: parameters to pass to the sync command ([full list here](http://s3tools.org/usage)).
 * `-e DATA_PATH=/data/`: container's data folder. Default is `/data/`. Should end with trailing slash.
 * `-e PREFIX=prefix`: Prefix to encrypted tgz file name. The basename is a date stamp.
-* `-e 'CRON_SCHEDULE=0 1 * * *'`: specifies when cron job starts ([details](http://en.wikipedia.org/wiki/Cron)). Default is `0 1 * * *` (runs every day at 1:00 am).
+* `-e 'CRON_SCHEDULE=0 1 * * *'`: specifies when cron job starts ([details](http://en.wikipedia.org/wiki/Cron)). Default is `5 3 * * *` (runs every night at 03:05).
 * `no-cron`: run container once and exit (no cron scheduling).
 
 ### Examples:
 
-Run upload to S3 everyday at 12:00pm:
+Run upload to S3 everyday at 12:00:
 
     docker run -d \
         -e ACCESS_KEY=myawskey \
@@ -50,12 +50,3 @@ Run once then delete the container:
 	-e AES_PASSPHRASE=secret \
         -v /home/user/data:/data:ro \
         strawpay/backup-to-s3 no-cron
-
-Run once to delete from s3 then delete the container:
-
-    docker run --rm \
-        -e ACCESS_KEY=myawskey \
-        -e SECRET_KEY=myawssecret \
-        -e S3_PATH=s3://my-bucket/backup/ \
-	-e AES_PASSPHRASE=secret \
-        strawpay/backup-to-s3 delete
