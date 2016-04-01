@@ -1,26 +1,34 @@
-#!/bin/bash 
+#!/bin/bash
 
 set -e
 
 dateISO() {
-    date -u '+%Y-%m-%dT%H:%M:%SZ'
+    date -j -f "%s" $started -u  +"%Y-%m-%dT%H:%M:%SZ"
 }
 
-start=$(dateISO)
-echo "Backup started: $start"
+started=$(date +%s)
+startedAt=$(date -u -d @$started  +"%Y-%m-%dT%H:%M:%SZ")
 
 if [ "$PREFIX" ]; then
-    name="$PREFIX-$start.tgz"
+    name="$PREFIX-$startedAt.tgz"
 else
-    name="$start.tgz"
+    name="$startedAt.tgz"
 fi
-
+s3name=$name.aes
 tar czf /tmp/$name  -C $DATA_PATH .
-openssl enc -aes-256-cbc -salt -k $AES_PASSPHRASE -in /tmp/$name -out /tmp/$name.aes
+openssl enc -aes-256-cbc -salt -k $AES_PASSPHRASE -in /tmp/$name -out /tmp/$s3name
 
-/usr/local/bin/s3cmd put -m application/octet-stream $PARAMS /tmp/$name.aes "$S3_PATH"
+output=$(/usr/local/bin/s3cmd put -m application/octet-stream $PARAMS /tmp/$s3name "$S3_PATH" 2>&1 | tr '\n' ';' )
+code=$? 
+if [ $code ]; then
+    result=ok
+else
+    result="error:$code"
+fi  
 
 rm -f /tmp/$name
-rm -f /tmp/$name.aes
+rm -f /tmp/$s3name.aes
 
-echo "Backup finished: $(dateISO)"
+finished=$(date +%s)
+duration=$(( finished - started ))
+printf "{\"backup\": { \"startedAt\":\"%s\", \"duration\":\"PT%is\", \"name\":\"%s/%s\", \"result\":\"%s\", \"output\":\"%s\"}}" "$startedAt" $duration "$S3_PATH" "$s3name" $result "$output"

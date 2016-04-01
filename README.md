@@ -22,7 +22,7 @@ To decrypt file.tgz.aes:
 
 ### Optional parameters:
 
-* `-e PARAMS="--dry-run"`: parameters to pass to the sync command ([full list here](http://s3tools.org/usage)).
+* `-e PARAMS="--dry-run"`: parameters to pass to the sync command ([full list here](http://s3tools.org/usage)). Defaults to -q.
 * `-e DATA_PATH=/data/`: container's data folder. Default is `/data/`. Should end with trailing slash.
 * `-e PREFIX=prefix`: Prefix to encrypted tgz file name. The basename is a date stamp.
 * `-e 'CRON_SCHEDULE=0 1 * * *'`: specifies when cron job starts ([details](http://en.wikipedia.org/wiki/Cron)). Default is `5 3 * * *` (runs every night at 03:05).
