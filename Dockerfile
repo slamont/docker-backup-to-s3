@@ -11,9 +11,10 @@ ADD s3cfg /root/.s3cfg
 
 ADD start.sh /start.sh
 RUN chmod +x /start.sh
-
-ADD upload.sh /upload.sh
-RUN chmod +x /upload.sh
+ADD backup.sh /backup.sh
+RUN chmod +x /backup.sh
+ADD restore.sh /restore.sh
+RUN chmod +x /restore.sh
 
 ENTRYPOINT ["/start.sh"]
 CMD [""]

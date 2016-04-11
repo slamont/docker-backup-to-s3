@@ -13,16 +13,30 @@ CRON_SCHEDULE=${CRON_SCHEDULE:-3 5 * * *}
 echo "access_key=$ACCESS_KEY" >> /root/.s3cfg
 echo "secret_key=$SECRET_KEY" >> /root/.s3cfg
 
-if [[ "$1" == 'no-cron' ]]; then
-    exec /upload.sh
-else
-    echo "Scheduling backup cron:$CRON_SCHEDULE" 
-    LOGFIFO='/var/log/cron.fifo'
-    if [[ ! -e "$LOGFIFO" ]]; then
-        mkfifo "$LOGFIFO"
-    fi
-    CRON_ENV="PARAMS='$PARAMS'\nDATA_PATH='$DATA_PATH'\nS3_PATH='$S3_PATH'\nPREFIX='$PREFIX'\nAES_PASSPHRASE='$AES_PASSPHRASE'"
-    echo -e "$CRON_ENV\n$CRON_SCHEDULE /upload.sh > $LOGFIFO 2>&1" | crontab -
-    cron
-    tail -f "$LOGFIFO"
-fi
+case $1 in 
+
+    backup-once)
+	exec /backup.sh
+	;;
+
+    schedule)
+	echo "Scheduling backup cron:$CRON_SCHEDULE" 
+	LOGFIFO='/var/log/cron.fifo'
+	if [[ ! -e "$LOGFIFO" ]]; then
+	    mkfifo "$LOGFIFO"
+	fi
+	CRON_ENV="PARAMS='$PARAMS'\nDATA_PATH='$DATA_PATH'\nS3_PATH='$S3_PATH'\nPREFIX='$PREFIX'\nAES_PASSPHRASE='$AES_PASSPHRASE'"
+	echo -e "$CRON_ENV\n$CRON_SCHEDULE /backup.sh > $LOGFIFO 2>&1" | crontab -
+	cron
+	tail -f "$LOGFIFO"
+	;;
+    
+    restore)
+	exec /restore.sh
+	: ${VERSION:?:"VERSION env varible is required"}
+	;;
+
+    *)
+	echo "Error: must specify operation, one of backup, schedule or restore"
+	exit 1
+esac
