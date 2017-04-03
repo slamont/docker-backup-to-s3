@@ -30,7 +30,7 @@ else
 fi
 
 rm -f /tmp/$name
-rm -f /tmp/$s3name.aes
+rm -f /tmp/$s3name
 
 finished=$(date +%s)
 duration=$(( finished - started ))
